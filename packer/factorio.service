@@ -1,0 +1,11 @@
+[Unit]
+Description=Factorio Headless Server
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+User=factorio
+Group=factorio
+ExecStart=/opt/factorio/factorio-run.sh
