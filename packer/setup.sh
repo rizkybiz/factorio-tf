@@ -20,5 +20,4 @@ sudo mkdir /opt/factorio/config
 
 # setup non-root user permissions
 sudo adduser --disabled-login --no-create-home --gecos factorio factorio
-sudo opt/factorio/bin/x64/factorio --create /opt/factorio/saves/savegame1.zip
 

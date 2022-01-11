@@ -45,7 +45,7 @@ variable "server_password" {
 
 variable "source_ip" {
   type        = string
-  description = "ip of your machine for SSH access"
+  description = "your external IP to allow SSH access to the VM"
 }
 
 variable "admins" {

@@ -18,7 +18,7 @@ resource "digitalocean_project" "factorio" {
 }
 
 data "digitalocean_droplet_snapshot" "factorio-snapshot" {
-  name_regex  = "^factorio-"
+  name_regex  = "^factorio"
   region      = var.region
   most_recent = true
 }
@@ -53,14 +53,13 @@ resource "digitalocean_droplet" "factorio" {
   }
 
   # provisioner "file" {
-  #   content = templatefile("files/admins.tftpl", {
-  #     admins = var.admins
-  #   })
+  #   content     = jsonencode(var.admins)
   #   destination = "/opt/factorio/config/admins.json"
   # }
 
   provisioner "remote-exec" {
     inline = [
+      "sudo chmod +x /opt/factorio/factorio-run.sh",
       "sudo chown -R factorio:factorio /opt/factorio",
       "sudo systemctl start factorio"
     ]
