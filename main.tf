@@ -52,14 +52,21 @@ resource "digitalocean_droplet" "factorio" {
     destination = "/opt/factorio/config/config.json"
   }
 
-  # provisioner "file" {
-  #   content     = jsonencode(var.admins)
-  #   destination = "/opt/factorio/config/admins.json"
-  # }
+  provisioner "file" {
+    content     = jsonencode(var.admins)
+    destination = "/opt/factorio/config/admins.json"
+  }
+
+  provisioner "file" {
+    source      = "./saves.zip"
+    destination = "/opt/factorio/saves.zip"
+  }
 
   provisioner "remote-exec" {
     inline = [
-      "sudo chmod +x /opt/factorio/factorio-run.sh",
+      "sudo systemctl daemon-reload",
+      "sudo unzip /opt/factorio/saves.zip -d /opt/factorio/",
+      "sudo rm /opt/factorio/saves.zip",
       "sudo chown -R factorio:factorio /opt/factorio",
       "sudo systemctl start factorio"
     ]

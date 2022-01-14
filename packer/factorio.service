@@ -8,4 +8,4 @@ WantedBy=multi-user.target
 Type=simple
 User=factorio
 Group=factorio
-ExecStart=/opt/factorio/factorio-run.sh
+ExecStart=/opt/factorio/bin/x64/factorio --start-server /opt/factorio/saves/savegame1.zip --server-settings /opt/factorio/config/config.json --server-adminlist /opt/factorio/config/admins.json

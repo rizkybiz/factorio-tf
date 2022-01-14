@@ -24,12 +24,7 @@ build {
   provisioner "shell" {
     script = "./centos-setup.sh"
   }
-
-  provisioner "file" {
-    source = "factorio-run.sh"
-    destination = "/opt/factorio/factorio-run.sh"
-  }
-
+  
   provisioner "file" {
     source = "factorio.service"
     destination = "/etc/systemd/system/factorio.service"
@@ -37,6 +32,7 @@ build {
 
   provisioner "shell" {
     inline = [
+      "sudo sed -i s/^SELINUX=.*$/SELINUX=disabled/ /etc/selinux/config",
       "sudo systemctl daemon-reload",
       "sudo systemctl enable factorio"
     ]

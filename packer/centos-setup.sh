@@ -1,6 +1,7 @@
 #! /bin/sh
 
 sudo yum update -y
+sudo yum install -y unzip zip
 
 # download headless factorio and unpack
 sudo curl -L "https://www.factorio.com/get-download/1.1.50/headless/linux64" -o factorio_headless.tar.xz
