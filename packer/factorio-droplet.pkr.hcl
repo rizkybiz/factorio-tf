@@ -11,8 +11,8 @@ variable "apikey" {}
 
 source "digitalocean" "centos8" {
   api_token = "${var.apikey}"
-  snapshot_name = "factorio-1.1.50-${timestamp()}"
-  image = "centos-8-x64"
+  snapshot_name = "factorio-1.1.53-${timestamp()}"
+  image = "centos-stream-8-x64"
   region = "nyc1"
   size = "s-1vcpu-1gb"
   ssh_username = "root"
