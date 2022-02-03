@@ -29,7 +29,7 @@ source "amazon-ebs" "factorio" {
   region                  = "us-east-1"
   source_ami              = data.amazon-ami.aws_linux_2.id
   ami_virtualization_type = "hvm"
-  ssh_username = "ec2-user"
+  ssh_username            = "ec2-user"
   tags = {
     Owner = "jdefrank"
   }
@@ -39,6 +39,10 @@ build {
   hcp_packer_registry {
     bucket_name = "factorio"
     description = "Factorio Images"
+    bucket_labels = {
+      "team" = "solutions engineering"
+      "os"   = "linux"
+    }
   }
   sources = [
     "source.amazon-ebs.factorio"
@@ -47,13 +51,13 @@ build {
   provisioner "shell" {
     inline = [
       "sudo yum install -y unzip zip",
-      "sudo mkdir /opt/factorio",
-      "sudo mkdir /opt/factorio/config",
       "sudo curl -Ls 'https://www.factorio.com/get-download/${var.version}/headless/linux64' -o factorio_headless.tar.xz",
       "sudo xz -d factorio_headless.tar.xz",
       "sudo tar -xf factorio_headless.tar",
       "sudo rm factorio_headless.tar",
       "sudo mv factorio /opt/factorio",
+      "sudo mkdir /opt/factorio",
+      "sudo mkdir /opt/factorio/config",
       "sudo groupadd factorio",
       "sudo adduser --no-create-home -g factorio factorio",
       "sudo passwd -l factorio"
