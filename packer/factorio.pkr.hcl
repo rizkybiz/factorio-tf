@@ -7,6 +7,9 @@ packer {
   }
 }
 
+// you must export DIGITALOCEAN_TOKEN, HCP_CLIENT_ID,
+// HCP_CLIENT_SECRET, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
+
 // allow input of factorio version
 variable "version" {
   type        = string
@@ -40,7 +43,7 @@ source "digitalocean" "centos8-factorio" {
 }
 
 // AWS Source
-source "amazon-ebs" "factorio" {
+source "amazon-ebs" "al2-factorio" {
   ami_name                = "jdefrank-factorio-${var.version}-${local.uuid}"
   instance_type           = "t2.micro"
   region                  = "us-east-1"
@@ -52,52 +55,7 @@ source "amazon-ebs" "factorio" {
   }
 }
 
-// AWS Build stage
-// build {
-//   hcp_packer_registry {
-//     bucket_name = "factorio"
-//     description = "Factorio Images"
-//     bucket_labels = {
-//       "team" = "solutions engineering"
-//       "os"   = "linux"
-//     }
-//     build_labels = {
-//       "platform" = "aws"
-//     }
-//   }
-
-//   sources = ["source.amazon-ebs.factorio"]
-
-//   provisioner "shell" {
-//     inline = [
-//       "sudo yum install -y unzip zip",
-//       "sudo curl -Ls 'https://www.factorio.com/get-download/${var.version}/headless/linux64' -o factorio_headless.tar.xz",
-//       "sudo xz -d factorio_headless.tar.xz",
-//       "sudo tar -xf factorio_headless.tar",
-//       "sudo rm factorio_headless.tar",
-//       "sudo mv factorio /opt/factorio",
-//       "sudo mkdir /opt/factorio/config",
-//       "sudo groupadd factorio",
-//       "sudo adduser --no-create-home -g factorio factorio",
-//       "sudo passwd -l factorio"
-//     ]
-//   }
-
-//   provisioner "file" {
-//     source      = "./files/factorio.service"
-//     destination = "~/factorio.service"
-//   }
-
-//   provisioner "shell" {
-//     inline = [
-//       "sudo mv ~/factorio.service /etc/systemd/system/factorio.service",
-//       "sudo systemctl daemon-reload",
-//       "sudo systemctl enable factorio"
-//     ]
-//   }
-// }
-
-// DigitalOcean build stage
+// Build Stage
 build {
   hcp_packer_registry {
     bucket_name = "factorio"
@@ -107,15 +65,15 @@ build {
       "os"   = "linux"
     }
     build_labels = {
-      "platform" = "digital ocean"
+      "factorio_version" = ${var.version}
     }
   }
 
-  sources = ["source.digitalocean.centos8-factorio"]
+  sources = ["source.digitalocean.centos8-factorio", "source.amazon-ebs.al2-factorio"]
 
   provisioner "shell" {
+    only = ["source.digitalocean.centos8-factorio"]
     inline = [
-      "sudo yum update -y",
       "sudo yum install -y unzip zip",
       "sudo sed -i s/^SELINUX=.*$/SELINUX=disabled/ /etc/selinux/config",
       "sudo curl -L 'https://www.factorio.com/get-download/${var.version}/headless/linux64' -o factorio_headless.tar.xz",
@@ -130,8 +88,24 @@ build {
     ]
   }
 
+    provisioner "shell" {
+    only = ["source.amazon-ebs.al2-factorio"]
+    inline = [
+      "sudo yum install -y unzip zip",
+      "sudo curl -Ls 'https://www.factorio.com/get-download/${var.version}/headless/linux64' -o factorio_headless.tar.xz",
+      "sudo xz -d factorio_headless.tar.xz",
+      "sudo tar -xf factorio_headless.tar",
+      "sudo rm factorio_headless.tar",
+      "sudo mv factorio /opt/factorio",
+      "sudo mkdir /opt/factorio/config",
+      "sudo groupadd factorio",
+      "sudo adduser --no-create-home -g factorio factorio",
+      "sudo passwd -l factorio"
+    ]
+  }
+
   provisioner "file" {
-    source      = "factorio.service"
+    source      = "./files/factorio.service"
     destination = "/etc/systemd/system/factorio.service"
   }
 
