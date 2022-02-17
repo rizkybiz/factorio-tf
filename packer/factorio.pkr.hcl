@@ -74,6 +74,7 @@ build {
   provisioner "shell" {
     only = ["source.digitalocean.centos8-factorio"]
     inline = [
+      "echo 'building DO factorio image'",
       "sudo yum install -y unzip zip",
       "sudo sed -i s/^SELINUX=.*$/SELINUX=disabled/ /etc/selinux/config",
       "sudo curl -L 'https://www.factorio.com/get-download/${var.version}/headless/linux64' -o factorio_headless.tar.xz",
@@ -91,6 +92,7 @@ build {
     provisioner "shell" {
     only = ["source.amazon-ebs.al2-factorio"]
     inline = [
+      "echo 'building AWS factorio image'",
       "sudo yum install -y unzip zip",
       "sudo curl -Ls 'https://www.factorio.com/get-download/${var.version}/headless/linux64' -o factorio_headless.tar.xz",
       "sudo xz -d factorio_headless.tar.xz",
