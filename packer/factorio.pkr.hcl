@@ -65,7 +65,7 @@ build {
       "os"   = "linux"
     }
     build_labels = {
-      "factorio_version" = ${var.version}
+      "factorio_version" = "${var.version}"
     }
   }
 
@@ -105,12 +105,29 @@ build {
   }
 
   provisioner "file" {
+    only = ["source.digitalocean.centos8-factorio"]
     source      = "./files/factorio.service"
     destination = "/etc/systemd/system/factorio.service"
   }
 
+  provisioner "file" {
+    only = ["source.amazon-ebs.al2-factorio"]
+    source      = "./files/factorio.service"
+    destination = "/home/ec2-user/factorio.service"
+  }  
+
   provisioner "shell" {
+    only = ["source.digitalocean.centos8-factorio"]
     inline = [
+      "sudo systemctl daemon-reload",
+      "sudo systemctl enable factorio"
+    ]
+  }
+
+  provisioner "shell" {
+    only = ["source.amazon-ebs.al2-factorio"]
+    inline = [
+      "sudo mv /home/ec2-user/factorio.service /etc/systemd/system/factorio.service",
       "sudo systemctl daemon-reload",
       "sudo systemctl enable factorio"
     ]
