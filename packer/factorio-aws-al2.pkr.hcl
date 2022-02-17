@@ -56,7 +56,6 @@ build {
       "sudo tar -xf factorio_headless.tar",
       "sudo rm factorio_headless.tar",
       "sudo mv factorio /opt/factorio",
-      "sudo mkdir /opt/factorio",
       "sudo mkdir /opt/factorio/config",
       "sudo groupadd factorio",
       "sudo adduser --no-create-home -g factorio factorio",
