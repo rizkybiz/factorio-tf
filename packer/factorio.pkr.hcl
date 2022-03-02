@@ -64,15 +64,14 @@ build {
       "team" = "solutions engineering"
       "os"   = "linux"
     }
-    build_labels = {
-      "factorio_version" = "${var.version}"
-    }
   }
 
   sources = ["source.digitalocean.centos8-factorio", "source.amazon-ebs.al2-factorio"]
+  // sources = ["source.digitalocean.centos8-factorio"]
 
   provisioner "shell" {
-    only = ["source.digitalocean.centos8-factorio"]
+    name = "DigitalOcean Provision Step 1"
+    only = ["digitalocean.centos8-factorio"]
     inline = [
       "echo 'building DO factorio image'",
       "sudo yum install -y unzip zip",
@@ -90,7 +89,7 @@ build {
   }
 
     provisioner "shell" {
-    only = ["source.amazon-ebs.al2-factorio"]
+    only = ["amazon-ebs.al2-factorio"]
     inline = [
       "echo 'building AWS factorio image'",
       "sudo yum install -y unzip zip",
@@ -107,19 +106,19 @@ build {
   }
 
   provisioner "file" {
-    only = ["source.digitalocean.centos8-factorio"]
+    only = ["digitalocean.centos8-factorio"]
     source      = "./files/factorio.service"
     destination = "/etc/systemd/system/factorio.service"
   }
 
   provisioner "file" {
-    only = ["source.amazon-ebs.al2-factorio"]
+    only = ["amazon-ebs.al2-factorio"]
     source      = "./files/factorio.service"
     destination = "/home/ec2-user/factorio.service"
   }  
 
   provisioner "shell" {
-    only = ["source.digitalocean.centos8-factorio"]
+    only = ["digitalocean.centos8-factorio"]
     inline = [
       "sudo systemctl daemon-reload",
       "sudo systemctl enable factorio"
@@ -127,7 +126,7 @@ build {
   }
 
   provisioner "shell" {
-    only = ["source.amazon-ebs.al2-factorio"]
+    only = ["amazon-ebs.al2-factorio"]
     inline = [
       "sudo mv /home/ec2-user/factorio.service /etc/systemd/system/factorio.service",
       "sudo systemctl daemon-reload",

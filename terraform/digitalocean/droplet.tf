@@ -1,30 +1,13 @@
-terraform {
-  required_providers {
-    digitalocean = {
-      source  = "digitalocean/digitalocean"
-      version = "2.16.0"
-    }
-  }
+data "hcp_packer_iteration" "factorio_production_iteration" {
+  bucket_name = "factorio"
+  channel = "Production"
 }
 
-provider "digitalocean" {
-  token = var.do_token
-}
-
-resource "digitalocean_project" "factorio" {
-  name        = "factorio"
-  description = "A project to house a factorio server"
-  resources   = [digitalocean_droplet.factorio.urn]
-}
-
-data "digitalocean_droplet_snapshot" "factorio-snapshot" {
-  name_regex  = "^factorio"
-  region      = var.region
-  most_recent = true
-}
-
-data "digitalocean_ssh_key" "key" {
-  name = var.ssh_key_name
+data "hcp_packer_image" "factorio" {
+  bucket_name    = "factorio"
+  cloud_provider = "DigitalOcean"
+  iteration_id   = data.hcp_packer_iteration.factorio_production_iteration.ulid
+  region         = "nyc1"
 }
 
 resource "digitalocean_droplet" "factorio" {
@@ -58,7 +41,7 @@ resource "digitalocean_droplet" "factorio" {
   }
 
   provisioner "file" {
-    source      = "./saves.zip"
+    source      = "./files/saves.zip"
     destination = "/opt/factorio/saves.zip"
   }
 

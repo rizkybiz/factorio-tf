@@ -43,6 +43,11 @@ variable "server_password" {
   description = "password of the factorio server"
 }
 
+variable "server_port" {
+  default     = 34197
+  description = "port which factorio will listen on"
+}
+
 variable "source_ip" {
   type        = string
   description = "your external IP to allow SSH access to the VM"
@@ -51,4 +56,14 @@ variable "source_ip" {
 variable "admins" {
   type        = list(string)
   description = "server admins"
+}
+
+variable "tfc_org" {
+  type        = string
+  description = "terraform cloud org name"
+}
+
+variable "tfc_workspace" {
+  type        = string
+  description = "terraform cloud workspace name"
 }
